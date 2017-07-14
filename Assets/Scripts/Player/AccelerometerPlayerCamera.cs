@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityUtilityLibrary;
 
 /*
  * Rotates main camera when accelerometers x value reach certain threshold.
  * This happen when player move one side of device up.
  * Rotation is always 90 degrees executed as coroutine.
- * TO DO: check if angle after rotation doesn't have too large imprecision
  */
 public class AccelerometerPlayerCamera : MonoBehaviour 
 {
@@ -32,14 +30,15 @@ public class AccelerometerPlayerCamera : MonoBehaviour
     {
         if (!_performingRotation)
         {
+            CanRotateCheck();
             RotationType neededRotation = GetNeededRotation();
             if (neededRotation == RotationType.Right)
             {
-                StartCoroutine(DoRotation(-turnAngle, neededRotation)); 
+                StartCoroutine(DoRotation(-turnAngle)); 
             }
             else if (neededRotation == RotationType.Left)
             {
-                StartCoroutine(DoRotation(turnAngle, neededRotation)); 
+                StartCoroutine(DoRotation(turnAngle)); 
             }
         }
         Camera.main.transform.position = transform.position + cameraOffset;
@@ -56,24 +55,25 @@ public class AccelerometerPlayerCamera : MonoBehaviour
         {
             return RotationType.Left;
         }
-        else if ((Input.acceleration.x >= -_canRotateResetThreshold) && (Input.acceleration.x <= _canRotateResetThreshold))
-        {
-            _canRotate = true; //set elsewhere
-        }
         return RotationType.None;
     }
-    private IEnumerator DoRotation(float angleToTurn, RotationType rotationType) //DoRotation -> Rotate
+    private void CanRotateCheck()
+    {
+        if ((Input.acceleration.x >= -_canRotateResetThreshold) && (Input.acceleration.x <= _canRotateResetThreshold))
+        {
+            _canRotate = true;
+        }
+    }
+    private IEnumerator DoRotation(float angleToTurn) 
     {
         _performingRotation = true;
-        float deltaAngle = rotationSpeed * Time.deltaTime;
-        if (rotationType == RotationType.Right)
-        {
-            deltaAngle *= -1; 
-        }
+        float speed = (angleToTurn > 0) ? rotationSpeed : (rotationSpeed * -1);
+        float absoluteAngleToTurn = Mathf.Abs(angleToTurn);
         float angleTotal = 0;
-        while(!MathMethod.Approximately(angleTotal, angleToTurn, 3)) //replace
+        do
         {
-            if (Mathf.Abs(angleTotal + deltaAngle) > Mathf.Abs(angleToTurn))
+            float deltaAngle = speed * Time.deltaTime;
+            if (Mathf.Abs(angleTotal + deltaAngle) > absoluteAngleToTurn)
             {
                 deltaAngle = angleToTurn - angleTotal;
             }
@@ -82,6 +82,7 @@ public class AccelerometerPlayerCamera : MonoBehaviour
             RotateCameraOffset(deltaAngle);
             yield return null;
         }
+        while(Mathf.Abs(angleTotal) < absoluteAngleToTurn);
         _canRotate = false;
         _performingRotation = false;
     }
