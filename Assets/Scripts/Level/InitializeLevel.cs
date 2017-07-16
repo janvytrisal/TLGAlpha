@@ -13,12 +13,12 @@ public class InitializeLevel : MonoBehaviour
 
     void Awake()
     {
+        _levelSpecifications = GetComponent<LevelSpecifications>();
         StartCoroutine(Initialize());
     }
 
     private IEnumerator Initialize()
     {
-        _levelSpecifications = GetComponent<LevelSpecifications>();
         InitializeDeathCounter();
         InitializeRandomNumberGenerator();
         yield return StartCoroutine(GeneratePlatforms()); 
@@ -27,7 +27,8 @@ public class InitializeLevel : MonoBehaviour
         DestroyPlaceholders();
         ActivatePlatforms();
         SaveGame();
-        FinishInitialization();
+        InstantiatePlayer();
+        AdjustHUD();
     }
     private void InitializeDeathCounter()
     {
@@ -130,11 +131,9 @@ public class InitializeLevel : MonoBehaviour
         while(seeds.Contains(chosenSeed) && (maxLevelCounter < (-min + max)));
         return chosenSeed;
     }
-    //replace with event later
-    private void FinishInitialization()
+    //replace later
+    private void AdjustHUD()
     {
-        InstantiatePlayer();
-        Camera.main.GetComponent<ViewOnPlayer>().enabled = true;
         Transform topPanelHUD = GameObject.Find("HUDCanvas/TopPanel").transform;
         topPanelHUD.Find("HealthBar").gameObject.SetActive(true);
         topPanelHUD.Find("PauseButton").gameObject.SetActive(true);

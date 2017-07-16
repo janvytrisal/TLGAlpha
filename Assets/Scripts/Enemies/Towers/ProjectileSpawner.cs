@@ -23,7 +23,7 @@ public class ProjectileSpawner : MonoBehaviour
         _timeElapsed = fireFrequency;
         InitializeProjectilePool();
     }
-    void Update()//LateUpdate()
+    void Update()
     {
         if (_PlayerAim.ClearView) //can fire
         {
@@ -71,6 +71,6 @@ public class ProjectileSpawner : MonoBehaviour
                 return true;
             }
         }
-        return false; //all projectiles are in use (should not happen)
+        return false; //all projectiles are in use
     }
 }

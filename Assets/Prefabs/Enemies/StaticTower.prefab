@@ -263,3 +263,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimDistance: 10
+  projectilePrefab: {fileID: 1000011869830562, guid: ad7dd5605a4aed24dbf007b9e8217555,
+    type: 2}
