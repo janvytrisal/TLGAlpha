@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityUtilityLibrary;
 
 /*
- * Create walls next to platforms using platforms outer placeholder.
+ * Create walls next to platforms using platforms outer placeholders.
  * Flag restricts where walls can be build.
- * UNFINISHED -> fill gaps, later add floor?
+ * TO DO -> fill gaps, add floor
  */
 public class SurroundingsGenerator : MonoBehaviour 
 {
@@ -16,70 +16,27 @@ public class SurroundingsGenerator : MonoBehaviour
     public void GenerateSurroundings(List<GameObject[]> placeholders)
     {
         List<GameObject> surroundings = ArrangeSurroundings(placeholders);
-        //fill gaps
         SetParentAll(surroundings, surroundingsGathererPrefab);
     }
 
-    //separate left and right walls to easier fill gaps later
     private List<GameObject> ArrangeSurroundings(List<GameObject[]> placeholders)
     {
         List<GameObject> surroundings = new List<GameObject>();
-        Transform wall = wallPrefab.transform;
-        //arrange start placeholder
-        for(int i = 1; i < placeholders.Count - 1; i++)
+        CreateSideWalls(placeholders[0][1].transform, surroundings);
+        for(int i = 1; i < placeholders.Count; i++)
         {
             Transform previousOuterPlaceholder = placeholders[i - 1][1].transform;
             Transform currentOuterPlaceholder = placeholders[i][1].transform;
-            float previousYRotation = previousOuterPlaceholder.rotation.eulerAngles.y;
-            float currentYRotation = currentOuterPlaceholder.root.eulerAngles.y;
-            if (previousYRotation == currentYRotation)
+            if (previousOuterPlaceholder.forward == currentOuterPlaceholder.forward)
             {
-                GameObject leftWall;
-                GameObject rightWall;
-                InstantiateSideWalls(currentOuterPlaceholder, out leftWall, out rightWall);
-                if (leftWall != null)
-                {
-                    surroundings.Add(leftWall);
-                }
-                if (rightWall != null)
-                {
-                    surroundings.Add(rightWall);
-                }
+                CreateSideWalls(currentOuterPlaceholder, surroundings);
             }
             else
             {
-                float side = MathMethod.VectorSign(previousOuterPlaceholder.forward);
-                GameObject sideWall = InstantiateSideWall(currentOuterPlaceholder, side);
-                GameObject backWall = InstantiateBackWall(currentOuterPlaceholder);
-                ScaleDownWall(previousOuterPlaceholder, backWall.transform);
-                surroundings.Add(sideWall);
-                surroundings.Add(backWall);
+                CreateCornerWalls(previousOuterPlaceholder, currentOuterPlaceholder, surroundings);
             }
         }
-        //arrange end placeholder
         return surroundings;
-    }
-    //Assumption: there is always overlap
-    private void ScaleDownWall(Transform previousPlaceholder, Transform wall)
-    {
-        float previousYRotation = previousPlaceholder.rotation.eulerAngles.y;
-        float wallYRotation = wall.rotation.eulerAngles.y;
-        float previousPosition = (previousYRotation % 180 == 0) ? previousPlaceholder.position.z : previousPlaceholder.position.x;
-        float wallPosition = (wallYRotation % 180 == 0) ? wall.position.x : wall.position.z;
-        float previousOffset = (previousPlaceholder.lossyScale.z / 2);
-        float wallOffest = (wall.lossyScale.x / 2);
-        float overlap;
-        if ((previousYRotation == 0) || (previousYRotation == 90))
-        {
-            overlap = (previousPosition + previousOffset) - (wallPosition - wallOffest);
-        }
-        else
-        {
-            overlap = (wallPosition + wallOffest) - (previousPosition - previousOffset);
-        }
-        Vector3 direction = (previousPlaceholder.forward == wall.right) ? wall.right : -wall.right;
-        wall.localScale -= new Vector3(overlap, 0, 0);
-        wall.position += (direction * (overlap / 2));
     }
     private PlaceholderFlag GetFlag(Transform placeholder)
     {
@@ -105,6 +62,13 @@ public class SurroundingsGenerator : MonoBehaviour
         wall.transform.localScale = wallScale;
         return wall;
     }
+    private void CreateSideWalls(Transform currentOuterPlaceholder, List<GameObject> surroundings)
+    {
+        GameObject leftWall;
+        GameObject rightWall; 
+        InstantiateSideWalls(currentOuterPlaceholder, out leftWall, out rightWall);
+        AddSideWalls(leftWall, rightWall, surroundings);
+    }
     private void InstantiateSideWalls(Transform currentPlaceholder, out GameObject leftWall, out GameObject rightWall)
     {
         PlaceholderFlag flag = GetFlag(currentPlaceholder);
@@ -127,6 +91,56 @@ public class SurroundingsGenerator : MonoBehaviour
             leftWall = InstantiateSideWall(currentPlaceholder, -1);
             rightWall = InstantiateSideWall(currentPlaceholder, 1);                    
         }
+    }
+    private void AddSideWalls(GameObject leftWall, GameObject rightWall, List<GameObject> surroundings)
+    {
+        if (leftWall != null)
+        {
+            surroundings.Add(leftWall);
+        }
+        if (rightWall != null)
+        {
+            surroundings.Add(rightWall);
+        }
+    }
+    private void CreateCornerWalls(Transform previousOuterPlaceholder, Transform currentOuterPlaceholder, List<GameObject> surroundings)
+    {
+        float side = MathMethod.VectorSign(previousOuterPlaceholder.forward);
+        GameObject sideWall = InstantiateSideWall(currentOuterPlaceholder, side);
+        GameObject backWall = InstantiateBackWall(currentOuterPlaceholder);
+        TrimPreviousOverlap(previousOuterPlaceholder, backWall.transform);
+        TrimSideWallOverlap(previousOuterPlaceholder, backWall.transform, sideWall.transform);
+        surroundings.Add(sideWall);
+        surroundings.Add(backWall);
+    }
+    //Assumption: there is always overlap
+    private void TrimPreviousOverlap(Transform previousPlaceholder, Transform wall)
+    {
+        float previousYRotation = previousPlaceholder.rotation.eulerAngles.y;
+        float wallYRotation = wall.rotation.eulerAngles.y;
+        float previousPosition = (previousYRotation % 180 == 0) ? previousPlaceholder.position.z : previousPlaceholder.position.x;
+        float wallPosition = (wallYRotation % 180 == 0) ? wall.position.x : wall.position.z;
+        float previousOffset = (previousPlaceholder.lossyScale.z / 2);
+        float wallOffest = (wall.lossyScale.x / 2);
+        float overlap;
+        if ((previousYRotation == 0) || (previousYRotation == 90))
+        {
+            overlap = (previousPosition + previousOffset) - (wallPosition - wallOffest);
+        }
+        else
+        {
+            overlap = (wallPosition + wallOffest) - (previousPosition - previousOffset);
+        }
+        Vector3 direction = (previousPlaceholder.forward == wall.right) ? wall.right : -wall.right;
+        wall.localScale -= new Vector3(overlap, 0, 0);
+        wall.position += (direction * (overlap / 2));
+    }
+    private void TrimSideWallOverlap(Transform previousPlaceholder, Transform backWall, Transform sideWall)
+    {
+        float overlap = sideWall.lossyScale.x;
+        Vector3 direction = (previousPlaceholder.forward == backWall.right) ? -backWall.right : backWall.right;
+        backWall.localScale -= new Vector3(overlap, 0, 0);
+        backWall.position += (direction * (overlap / 2));
     }
     private void SetParentAll(List<GameObject> gameObjects, GameObject parent)
     {

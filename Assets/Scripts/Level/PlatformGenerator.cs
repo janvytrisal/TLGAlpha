@@ -42,7 +42,7 @@ public class PlatformGenerator : MonoBehaviour
     private int _maxLineLength = 2;
     private float _extensionWidth = 10;
     private float _extensionHeight = 10;
-    private float _minGap = 0.01f; //so objects never touch
+    private float _minGap = 0.001f; //so objects never touch
 
     public GameObject basicPlatformPrefab;
     public GameObject startPlatformPrefab;

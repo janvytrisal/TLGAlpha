@@ -145,7 +145,6 @@ public class GameManager : MonoBehaviour
             binaryWriter.Write(seed);
         }
         binaryWriter.Close();
-        Debug.Log("All saved");
     }
     public static void SaveDeathCount()
     {
@@ -155,8 +154,7 @@ public class GameManager : MonoBehaviour
         BinaryWriter binaryWriter = new BinaryWriter(fileStream); //UTF8 default
 
         binaryWriter.Write(DeathCount);
-        binaryWriter.Close();
-        Debug.Log("DeathCount saved");        
+        binaryWriter.Close();       
     }
     public static void SaveNewSeed()
     {
@@ -170,7 +168,6 @@ public class GameManager : MonoBehaviour
         binaryWriter.Seek(4 * (Seeds.Count - 1), SeekOrigin.Current); //mby just jump to the end of file
         binaryWriter.Write(Seeds[Seeds.Count - 1]);
         binaryWriter.Close(); 
-        Debug.Log("New seed saved");
     }
     public static void LoadAll()
     {
@@ -189,7 +186,6 @@ public class GameManager : MonoBehaviour
                 Seeds.Add(binaryReader.ReadInt32());
             }
             binaryReader.Close();
-            Debug.Log("All loaded");
         }
     }
 }
