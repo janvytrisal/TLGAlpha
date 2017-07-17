@@ -15,20 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
-/*
- * Show current number of deaths on HUD, if player finished game before.
- */
-public class InitializeHUD : MonoBehaviour 
+public class FPSDisplay : MonoBehaviour 
 {
-    void Awake()
+    private float _timeElapsed;
+    private float _fpsCounter;
+    private float _fpsToDisplay;
+
+    void Start()
     {
-        if (GameManager.Highscore < int.MaxValue) //replace
+        _timeElapsed = 0;
+        _fpsCounter = 0;
+    }
+
+    void Update()
+    {
+        _timeElapsed += Time.deltaTime;
+        _fpsCounter++;
+        if (_timeElapsed >= 1)
         {
-            GameObject.Find("HUDCanvas/TopPanel").transform.Find("HighscorePanel").gameObject.SetActive(true);
+            _fpsToDisplay = _fpsCounter;
+            _timeElapsed = 0;
+            _fpsCounter = 0;
         }
+    }
+
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 450, 500, 25), "FPS: " + _fpsToDisplay);
     }
 }
