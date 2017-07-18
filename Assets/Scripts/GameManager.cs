@@ -16,17 +16,12 @@
  */
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 
 /*
  * Singleton
- * Store game data. Have methods for loading and saving game.
+ * Store game data. Has methods for loading and saving game.
  */
 
 public enum ApplicationState { Started = 0, NewGame, ExitLevel, Continue, NextLevel, EndGame };
@@ -39,7 +34,7 @@ public class GameManager : MonoBehaviour
     private List<GameObject> _platforms;
     private List<GameObject[]> _placeholders;
     private ApplicationState _state;
-	private int _deathCount;
+    private int _deathCount;
     private int _highscore = int.MaxValue;
 
     public static GameManager Instance
@@ -149,7 +144,7 @@ public class GameManager : MonoBehaviour
      */
     public static void SaveAll()
     {
-        string path = Application.persistentDataPath + "/gamedata.dat"; //require "Write Access: External", cuz can lead to Internal_SD instead of Internal Storage
+        string path = Application.persistentDataPath + "/gamedata.dat"; //require "Write Access: External", can lead to Internal_SD instead of Internal Storage
 
         FileStream fileStream = File.Create(path);
         BinaryWriter binaryWriter = new BinaryWriter(fileStream); //UTF8 default
@@ -168,7 +163,7 @@ public class GameManager : MonoBehaviour
         string path = Application.persistentDataPath + "/gamedata.dat"; 
 
         FileStream fileStream = File.Open(path, FileMode.OpenOrCreate);
-        BinaryWriter binaryWriter = new BinaryWriter(fileStream); //UTF8 default
+        BinaryWriter binaryWriter = new BinaryWriter(fileStream); 
 
         binaryWriter.Write(DeathCount);
         binaryWriter.Close();       
@@ -178,11 +173,11 @@ public class GameManager : MonoBehaviour
         string path = Application.persistentDataPath + "/gamedata.dat"; 
 
         FileStream fileStream = File.Open(path, FileMode.OpenOrCreate);
-        BinaryWriter binaryWriter = new BinaryWriter(fileStream); //UTF8 default
+        BinaryWriter binaryWriter = new BinaryWriter(fileStream); 
 
         binaryWriter.Seek(8, SeekOrigin.Begin);
         binaryWriter.Write(Seeds.Count);
-        binaryWriter.Seek(4 * (Seeds.Count - 1), SeekOrigin.Current); //mby just jump to the end of file
+        binaryWriter.Seek(4 * (Seeds.Count - 1), SeekOrigin.Current); 
         binaryWriter.Write(Seeds[Seeds.Count - 1]);
         binaryWriter.Close(); 
     }
@@ -193,7 +188,7 @@ public class GameManager : MonoBehaviour
         if (File.Exists(path))
         {
             FileStream fileStream = File.Open(path, FileMode.Open);
-            BinaryReader binaryReader = new BinaryReader(fileStream); //UTF8 default
+            BinaryReader binaryReader = new BinaryReader(fileStream); 
 
             DeathCount = binaryReader.ReadInt32();
             Highscore = binaryReader.ReadInt32();
