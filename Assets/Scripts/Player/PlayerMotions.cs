@@ -31,8 +31,6 @@ public class PlayerMotions : MonoBehaviour
     private Vector3 _velocity;
     private bool _jumped;
     private CollisionFlags _collisionFlags; //to make collision flags script independent (other scripts can call Move method freely)
-    private RectTransform _topPanelHUD;
-    private RectTransform _jumpPanel;
 
     public float movementSpeed;
     public float jumpSpeed;
@@ -64,20 +62,16 @@ public class PlayerMotions : MonoBehaviour
         _direction = Vector2.zero;
         _velocity = Vector3.zero;
         _jumped = false;
-        _topPanelHUD = (RectTransform)GameObject.Find("HUDCanvas").transform.Find("TopPanel");
-        _jumpPanel = (RectTransform)GameObject.Find("HUDCanvas").transform.Find("MainPanel").Find("RightHandPanel").Find("JumpPanel");
 	}
     void Update()
     {
+        #if UNITY_EDITOR
         if (IsGrounded())
         {
             _velocity.y = 0;
             _direction = Vector2.zero;
         }
-        #if UNITY_EDITOR
             ProcessKeyboardInput();
-        #elif UNITY_ANDROID 
-            ProcessTouches();
         #endif
     }
     //Do physics
@@ -99,7 +93,12 @@ public class PlayerMotions : MonoBehaviour
         Vector3 eulerAngles = new Vector3(eX, 0, eZ);
 
         bodyTransform.Rotate(eulerAngles, Space.World);
-        _collisionFlags = _characterController.Move(_velocity * Time.deltaTime); //velocity per second
+        _collisionFlags = _characterController.Move(_velocity * Time.deltaTime);
+        if (IsGrounded())
+        {
+            _velocity.y = 0;
+            _direction = Vector2.zero;
+        }
     }
 
     public bool IsGrounded()
@@ -113,6 +112,34 @@ public class PlayerMotions : MonoBehaviour
             _jumped = true;
         }
     }
+    public void ProcessTouches(Rect allowedArea)
+    {
+        foreach (Touch touch in Input.touches)
+        {
+            if (!allowedArea.Contains(touch.position))
+            {
+                continue;
+            }
+            if (IsGrounded())
+            {
+                if (touch.phase == TouchPhase.Began)
+                {
+                    _startPosition = touch.position;
+                }
+            }
+            else
+            {
+                if ((touch.phase == TouchPhase.Began) && (_direction == Vector2.zero))
+                {
+                    _startPosition = touch.position;
+                }
+            }
+            if (_startPosition != Vector2.zero) //to stop player from moving after respawn
+            {
+                _direction = (touch.position - _startPosition).normalized; //joystick like motion
+            }
+        }
+    }
 
     private void ProcessKeyboardInput()
     {
@@ -123,64 +150,6 @@ public class PlayerMotions : MonoBehaviour
         {
             _jumped = true;
         }
-    }
-    private void ProcessTouches()
-    {
-        foreach (Touch touch in Input.touches)
-        {
-            if (TouchWentToHUD(touch.position))
-            {
-                continue;
-            }
-
-            if (touch.position.x <= ((float)Screen.width / 2))
-            {
-                if (IsGrounded())
-                {
-                    if (touch.phase == TouchPhase.Began)
-                    {
-                        _startPosition = touch.position;
-                    }
-                    else if ((touch.phase == TouchPhase.Ended) ||
-                             (touch.phase == TouchPhase.Canceled))
-                    {
-                        _startPosition = Vector2.zero;
-                        continue; //direction remains zero
-                    }
-                }
-                else
-                {
-                    if ((touch.phase == TouchPhase.Began) && (_startPosition.magnitude == 0))
-                    {
-                        _startPosition = touch.position;
-                    }
-                }
-                if (_startPosition != Vector2.zero) //to stop player from moving after respawn
-                {
-                    _direction = (touch.position - _startPosition).normalized; //joystick like motion
-                }
-            }
-            else if (TouchWentToJumpPanel(touch.position))
-            {
-                if (IsGrounded() && (touch.phase == TouchPhase.Began))
-                {
-                    _jumped = true;
-                }
-            }
-        }
-    }
-
-    private bool TouchWentToHUD(Vector2 touchPosition)
-    {
-        Vector3 hudPosition = _topPanelHUD.position;
-        Vector2 localTouch = new Vector2(touchPosition.x - hudPosition.x, touchPosition.y - hudPosition.y); //move touchPosition to panel's local space (assumption: panel's world position is at lower left corner)
-        return _topPanelHUD.rect.Contains(localTouch);
-    }
-    private bool TouchWentToJumpPanel(Vector2 touchPosition)
-    {
-        Vector3 jumpPanelPosition = _jumpPanel.position;
-        Vector2 localTouch = new Vector2(touchPosition.x - jumpPanelPosition.x, touchPosition.y - jumpPanelPosition.y);
-        return _jumpPanel.rect.Contains(localTouch);
     }
     private Vector2 CorrectDirection()
     {

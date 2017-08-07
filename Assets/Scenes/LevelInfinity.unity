@@ -197,7 +197,7 @@ GameObject:
   m_PrefabParentObject: {fileID: 1711261649217594, guid: 3631871b95d9d144687d98fcb2311c25,
     type: 2}
   m_PrefabInternal: {fileID: 265693605}
---- !u!1001 &327172846
+--- !u!1001 &266169170
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -294,55 +294,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224391385359926380, guid: dd4cdd396dc8a5448bf8316930de3498,
+    - target: {fileID: 114932178418631602, guid: dd4cdd396dc8a5448bf8316930de3498,
         type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114136955608955018, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_Color.a
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114136955608955018, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114136955608955018, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114136955608955018, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224000011698747776, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 224000011698747776, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: -300
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000011568385606, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_MatchWidthOrHeight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224000011698747776, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 220
-      objectReference: {fileID: 0}
-    - target: {fileID: 224000011698747776, guid: dd4cdd396dc8a5448bf8316930de3498,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 220
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: JumpOnPointerDown
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dd4cdd396dc8a5448bf8316930de3498, type: 2}
