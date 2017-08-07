@@ -23,7 +23,7 @@ using System.Collections;
  */
 public class Jump : MonoBehaviour 
 {
-    public void JumpOnClick()
+    public void JumpOnPointerDown()
     {
         if (GameManager.Player != null)
         {

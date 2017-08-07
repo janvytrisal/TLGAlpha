@@ -68,12 +68,16 @@ public class DisplayHealthBar : MonoBehaviour
     private void LoadHealthBar()
     {
         _healthBar = new List<GameObject>();
-        RectTransform rectTransform = healthPrefab.GetComponent<RectTransform>();
         for (int i = 0; i < _playerHealth.CurrentHealth; i++)
         {
             _healthBar.Add(Instantiate(healthPrefab));
+            RectTransform rect = _healthBar[i].GetComponent<RectTransform>();
             _healthBar[i].transform.SetParent(transform);
-            _healthBar[i].GetComponent<RectTransform>().anchoredPosition = (Vector2.right * ((rectTransform.sizeDelta.x / 2) - 10f) * i);
+            float offset = 40 * i;
+            rect.offsetMin = new Vector2(offset, 0); //left, bottom
+            rect.offsetMax = new Vector2(offset, 0); //right, top
+            rect.localScale = Vector3.one;
+            //_healthBar[i].GetComponent<RectTransform>().anchoredPosition = (Vector2.right * ((rectPrefab.sizeDelta.x / 2) - 10f) * i);
         }
     }
 }
