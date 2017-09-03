@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d076160722311c2449e40d8f80eb0f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraOffset: {x: 0, y: 6, z: -6}
+  cameraOffset: {x: 0, y: 8, z: -8}
   cameraRotation: {x: 30, y: 0, z: 0}
   turnAngle: 90
   rotationSpeed: 360

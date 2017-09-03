@@ -35,7 +35,7 @@ public class DeathScore : MonoBehaviour
         
         if (GameManager.DeathCount < GameManager.Highscore)
         {
-            _textScript.text += "\nThis is a <color=green>new record</color> for least deaths per play through.";
+            _textScript.text += "\nThis is a <color=green>new record</color> for least deaths per playthrough.";
         }
 	}
 }

@@ -120,7 +120,15 @@ public class InitializeLevel : MonoBehaviour
     }
     private void InstantiatePlayer()
     {
-        GetComponent<PlayerInstantiator>().InstantiatePlayer();        
+        GetComponent<PlayerInstantiator>().InstantiatePlayer();
+    }
+    //replace later
+    private void AdjustHUD()
+    {
+        Transform topPanelHUD = GameObject.Find("HUDCanvas/TopPanel").transform;
+        topPanelHUD.Find("HealthBar").gameObject.SetActive(true);
+        topPanelHUD.Find("PauseButton").gameObject.SetActive(true);
+        GameObject.Find("LoadingPanel").SetActive(false);
     }
     private void SaveGame()
     {
@@ -147,13 +155,5 @@ public class InitializeLevel : MonoBehaviour
         }
         while(seeds.Contains(chosenSeed) && (maxLevelCounter < (-min + max)));
         return chosenSeed;
-    }
-    //replace later
-    private void AdjustHUD()
-    {
-        Transform topPanelHUD = GameObject.Find("HUDCanvas/TopPanel").transform;
-        topPanelHUD.Find("HealthBar").gameObject.SetActive(true);
-        topPanelHUD.Find("PauseButton").gameObject.SetActive(true);
-        GameObject.Find("LoadingPanel").SetActive(false);
     }
 }
