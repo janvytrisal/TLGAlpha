@@ -65,8 +65,8 @@ MonoBehaviour:
   - type: Straight
     prefabs:
     - {fileID: 1000012828784512, guid: abfdfca70f3ff064db556db2dc0b6b62, type: 2}
-    - {fileID: 1000011118162448, guid: b43a821fd63e2c54387ea2539d24d699, type: 2}
     - {fileID: 1000013808514310, guid: 8c0637bf46a294948afaa10806526fef, type: 2}
+    - {fileID: 1000011118162448, guid: b43a821fd63e2c54387ea2539d24d699, type: 2}
   - type: Circular
     prefabs:
     - {fileID: 1000010144758924, guid: 48998d0d4de18e74caa26e4c1e38b429, type: 2}

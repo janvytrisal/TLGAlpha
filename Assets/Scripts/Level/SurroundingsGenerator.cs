@@ -34,6 +34,7 @@ public class SurroundingsGenerator : MonoBehaviour
     {
         List<GameObject> surroundings = ArrangeSurroundings(placeholders);
         SetParentAll(surroundings, surroundingsGathererPrefab);
+        //StaticBatchingUtility.Combine(surroundingsGathererPrefab); //optimisation - batch surrounding's geometry together
     }
 
     private List<GameObject> ArrangeSurroundings(List<GameObject[]> placeholders)
